@@ -8,81 +8,150 @@ namespace GraduationTracker.Tests.Unit
     [TestClass]
     public class GraduationTrackerTests
     {
-        [TestMethod]
-        public void TestHasCredits()
-        {
-            var tracker = new GraduationTracker();
+        private Diploma diploma;
+        private Student[] students;
+        private GraduationTracker graduationTracker = new GraduationTracker();
 
-            var diploma = new Diploma
+        public GraduationTrackerTests()
+        {
+            PrepareTestData();
+        }
+
+        private void PrepareTestData()
+        {
+            diploma = new Diploma
             {
                 Id = 1,
                 Credits = 4,
                 Requirements = new int[] { 100, 102, 103, 104 }
             };
 
-            var students = new[]
+            students = new[]
             {
                new Student
                {
                    Id = 1,
-                   Courses = new Course[]
+                   CourseMarks = new CourseMark[]
                    {
-                        new Course{Id = 1, Name = "Math", Mark=95 },
-                        new Course{Id = 2, Name = "Science", Mark=95 },
-                        new Course{Id = 3, Name = "Literature", Mark=95 },
-                        new Course{Id = 4, Name = "Physichal Education", Mark=95 }
+                        new CourseMark{CourseId = 1, Mark=95 },
+                        new CourseMark{CourseId = 2, Mark=95 },
+                        new CourseMark{CourseId = 3, Mark=95 },
+                        new CourseMark{CourseId = 4, Mark=95 }
                    }
                },
                new Student
                {
                    Id = 2,
-                   Courses = new Course[]
+                   CourseMarks = new CourseMark[]
                    {
-                        new Course{Id = 1, Name = "Math", Mark=80 },
-                        new Course{Id = 2, Name = "Science", Mark=80 },
-                        new Course{Id = 3, Name = "Literature", Mark=80 },
-                        new Course{Id = 4, Name = "Physichal Education", Mark=80 }
+                        new CourseMark{CourseId = 1, Mark=80 },
+                        new CourseMark{CourseId = 2, Mark=80 },
+                        new CourseMark{CourseId = 3, Mark=80 },
+                        new CourseMark{CourseId = 4, Mark=80 }
                    }
                },
             new Student
             {
                 Id = 3,
-                Courses = new Course[]
+                CourseMarks = new CourseMark[]
                 {
-                    new Course{Id = 1, Name = "Math", Mark=50 },
-                    new Course{Id = 2, Name = "Science", Mark=50 },
-                    new Course{Id = 3, Name = "Literature", Mark=50 },
-                    new Course{Id = 4, Name = "Physichal Education", Mark=50 }
+                    new CourseMark{CourseId = 1, Mark=50 },
+                    new CourseMark{CourseId = 2, Mark=50 },
+                    new CourseMark{CourseId = 3, Mark=50 },
+                    new CourseMark{CourseId = 4, Mark=50 }
                 }
             },
             new Student
             {
                 Id = 4,
-                Courses = new Course[]
+                CourseMarks = new CourseMark[]
                 {
-                    new Course{Id = 1, Name = "Math", Mark=40 },
-                    new Course{Id = 2, Name = "Science", Mark=40 },
-                    new Course{Id = 3, Name = "Literature", Mark=40 },
-                    new Course{Id = 4, Name = "Physichal Education", Mark=40 }
+                    new CourseMark{CourseId = 1, Mark=40 },
+                    new CourseMark{CourseId = 2, Mark=40 },
+                    new CourseMark{CourseId = 3, Mark=40 },
+                    new CourseMark{CourseId = 4, Mark=40 }
                 }
             }
-
-
-            //tracker.HasGraduated()
         };
-            
-            var graduated = new List<Tuple<bool, STANDING>>();
-
-            foreach(var student in students)
-            {
-                graduated.Add(tracker.HasGraduated(diploma, student));      
-            }
-
-            
-            Assert.IsFalse(graduated.Any());
-
         }
 
+        [TestMethod]
+        public void TestHasCredits()
+        {
+            var tracker = new GraduationTracker();
+            var graduated = new List<Tuple<bool, STANDING>>();
 
+            foreach (var student in students)
+            {
+                var studentResult = tracker.HasGraduated(diploma, student);
+                if (studentResult.Item1)
+                    graduated.Add(studentResult);
+            }
+
+            Assert.IsFalse(graduated.Count == 0);
+        }
+
+        [TestMethod]
+        public void TestFailStudent()
+        {
+            int actualStudentCount = 1;
+            int expectedStudentCount = 0;
+
+            foreach (var student in students)
+            {
+                var studentResults = graduationTracker.HasGraduated(diploma, student);
+                if (!studentResults.Item1)
+                    expectedStudentCount++;
+            }
+
+            Assert.AreEqual(expectedStudentCount, actualStudentCount);
+        }
+
+        [TestMethod]
+        public void TestGraduatedStudent()
+        {
+            int actualStudentCount = 3;
+            int expectedStudentCount = 0;
+
+            foreach (var student in students)
+            {
+                var studentResults = graduationTracker.HasGraduated(diploma, student);
+                if (studentResults.Item1)
+                    expectedStudentCount++;
+            }
+
+            Assert.AreEqual(expectedStudentCount, actualStudentCount);
+        }
+
+        [TestMethod]
+        public void TestDiplomaNullTest()
+        {
+            Diploma diploma = null;
+            var actualResult = graduationTracker.HasGraduated(diploma, students[0]);
+            Tuple<bool, STANDING> expectedResult = new Tuple<bool, STANDING>(false, STANDING.None);
+
+            Assert.AreEqual(actualResult, expectedResult);
+        }
+
+        [TestMethod]
+        public void TestStudentNullTest()
+        {
+            var actualResult = graduationTracker.HasGraduated(diploma, null);
+            Tuple<bool, STANDING> expectedResult = new Tuple<bool, STANDING>(false, STANDING.None);
+
+            Assert.AreEqual(actualResult, expectedResult);
+        }
+
+        [TestMethod]
+        public void TestStudentAndDiplomaNullTest()
+        {
+            Diploma nullDiploma = null;
+            Student nullStudent = null;
+
+            var actualResult = graduationTracker.HasGraduated(nullDiploma, nullStudent);
+            Tuple<bool, STANDING> expectedResult = new Tuple<bool, STANDING>(false, STANDING.None);
+
+            Assert.AreEqual(actualResult, expectedResult);
+        }
     }
 }

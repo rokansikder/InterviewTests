@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Course.cs" />
+    <Compile Include="CourseMark.cs" />
     <Compile Include="Diploma.cs" />
     <Compile Include="GraduationTracker.cs" />
     <Compile Include="STANDING.cs" />

@@ -8,6 +8,11 @@ namespace GraduationTracker
 {
     public partial class GraduationTracker
     {
+        private IRepository repository;
+
+        public GraduationTracker(IRepository repository) {
+            this.repository = repository;
+        }
         public Tuple<bool, STANDING> HasGraduated(Diploma diploma, Student student)
         {
             Tuple<bool, STANDING> result = new Tuple<bool, STANDING>(false, STANDING.None);
@@ -16,7 +21,7 @@ namespace GraduationTracker
 
             var credits = 0;
             int totalMarks = 0;
-            var courseRequirements = Repository.GetCourseRequirements();
+            var courseRequirements = repository.GetCourseRequirements();
 
             for (int i = 0; i < diploma.Requirements.Length; i++)
             {

@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using Moq;
 
 namespace GraduationTracker.Tests.Unit
 {
@@ -10,15 +11,18 @@ namespace GraduationTracker.Tests.Unit
     {
         private Diploma diploma;
         private Student[] students;
-        private GraduationTracker graduationTracker = new GraduationTracker();
+        Mock<IRepository> _repository;
+        private GraduationTracker graduationTracker;
 
-        public GraduationTrackerTests()
+        
+        [TestInitialize]
+        public void Init()
         {
-            PrepareTestData();
-        }
+            _repository = new Mock<IRepository>();
+            _repository.Setup(r => r.GetCourseRequirements()).Returns(GetRequirements());  
+                        
+            graduationTracker = new GraduationTracker(_repository.Object);
 
-        private void PrepareTestData()
-        {
             diploma = new Diploma
             {
                 Id = 1,
@@ -75,15 +79,26 @@ namespace GraduationTracker.Tests.Unit
         };
         }
 
+       
+        private Requirement[] GetRequirements()
+        {
+            return new[]
+            {
+                    new Requirement{Id = 100, MinimumMark=50, CourseId = 1, Credits=1 },
+                    new Requirement{Id = 102, MinimumMark=50, CourseId = 2, Credits=1 },
+                    new Requirement{Id = 103, MinimumMark=50, CourseId = 3, Credits=1},
+                    new Requirement{Id = 104, MinimumMark=50, CourseId = 4, Credits=1 }
+                };
+        }
+        
         [TestMethod]
         public void TestHasCredits()
-        {
-            var tracker = new GraduationTracker();
+        {            
             var graduated = new List<Tuple<bool, STANDING>>();
 
             foreach (var student in students)
             {
-                var studentResult = tracker.HasGraduated(diploma, student);
+                var studentResult = graduationTracker.HasGraduated(diploma, student);
                 if (studentResult.Item1)
                     graduated.Add(studentResult);
             }

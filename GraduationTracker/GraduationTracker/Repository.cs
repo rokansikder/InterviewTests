@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace GraduationTracker
 {
-    public class Repository
+    public class Repository: IRepository
     {
-        public static Student GetStudent(int id)
+        public Student GetStudent(int id)
         {
             var students = GetStudents();
             if (students == null) return null;
@@ -16,7 +16,7 @@ namespace GraduationTracker
             return students.Where(s => s.Id == id).FirstOrDefault();
         }
 
-        public static Diploma GetDiploma(int id)
+        public Diploma GetDiploma(int id)
         {
             var diplomas = GetDiplomas();
             if (diplomas == null) return null;
@@ -24,7 +24,7 @@ namespace GraduationTracker
             return diplomas.Where(d => d.Id == id).FirstOrDefault();
         }
 
-        public static Requirement GetRequirement(int id)
+        public Requirement GetRequirement(int id)
         {
             var requirements = GetRequirements();
             if (requirements == null) return null;
@@ -32,12 +32,12 @@ namespace GraduationTracker
             return requirements.Where(r => r.Id == id).FirstOrDefault();
         }
 
-        public static Requirement[] GetCourseRequirements()
+        public Requirement[] GetCourseRequirements()
         {
             return GetRequirements();
         }
 
-        private static Course[] GetCourses()
+        private Course[] GetCourses()
         {
             return new Course[] {
                 new Course{ Id = 1, Name ="Math"},
@@ -47,7 +47,7 @@ namespace GraduationTracker
             };
         }
 
-        private static Diploma[] GetDiplomas()
+        private Diploma[] GetDiplomas()
         {
             return new[]
             {
@@ -60,7 +60,7 @@ namespace GraduationTracker
             };
         }
 
-        public static Requirement[] GetRequirements()
+        public Requirement[] GetRequirements()
         {
             return new[]
             {
@@ -70,7 +70,7 @@ namespace GraduationTracker
                     new Requirement{Id = 104, MinimumMark=50, CourseId = 4, Credits=1 }
                 };
         }
-        private static Student[] GetStudents()
+        private Student[] GetStudents()
         {
             return new[]
             {
